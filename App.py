@@ -18,6 +18,30 @@ youtube_url = st.text_input("Link do vídeo do YouTube:")
 def baixar_video(url):
     output_filename = "input_video.mp4"
     
+    if os.path.exists(output_filename):
+        os.remove(output_filename)
+
+    ydl_opts = {
+        'format': 'best[ext=mp4]/best',
+        'outtmpl': output_filename,
+        'overwrites': True,
+        'quiet': True,
+        'no_warnings': True,
+        # Burlar o bloqueio de Data Center usando cliente Mobile/Android
+        'extractor_args': {
+            'youtube': {
+                'player_client': ['android', 'ios']
+            }
+        },
+        'user_agent': 'com.google.android.youtube/19.09.37 (Linux; U; Android 11; CPH2015 Build/RP1A.200720.011)',
+    }
+    
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        ydl.download([url])
+        
+    return output_filename
+
+    
     # Remove o arquivo antigo caso ele ainda exista
     if os.path.exists(output_filename):
         os.remove(output_filename)
