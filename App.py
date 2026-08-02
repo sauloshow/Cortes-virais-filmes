@@ -11,7 +11,7 @@ st.title("✂️ Gerador de Cortes Virais de Vídeos")
 st.markdown("Cole o link de um vídeo do YouTube para extrair os trechos de maior impacto usando Inteligência Artificial.")
 
 # Configuração da chave de API da IA (Gemini)
-api_key = st.sidebar.text_input("Cole sua API Key da Google Gemini:", type="password")
+api_key = "AQ.Ab8RN6IixV2CjzxG26vbHDu7DPq0ycxd-0AYVQl79W7mxGj6mw"("Cole sua API Key da Google Gemini:", type="password")
 
 youtube_url = st.text_input("Link do vídeo do YouTube:")
 
