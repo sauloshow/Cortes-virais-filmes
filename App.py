@@ -28,6 +28,22 @@ def baixar_video_redes(url):
         os.remove(output_filename)
 
     ydl_opts = {
+        # Pega a versão direta em MP4 já unificada (evita checagens rigorosas de IP)
+        'format': 'b[ext=mp4]/best[ext=mp4]/best',
+        'outtmpl': output_filename,
+        'overwrites': True,
+        'quiet': True,
+        'no_warnings': True,
+        'user_agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1',
+    }
+    
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        ydl.download([url])
+        
+    return output_filename
+
+
+    ydl_opts = {
         'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
         'outtmpl': output_filename,
         'overwrites': True,
