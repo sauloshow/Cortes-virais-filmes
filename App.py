@@ -14,12 +14,15 @@ st.markdown("Cole o link de um vídeo do YouTube para extrair os trechos de maio
 api_key = "AQ.Ab8RN6IixV2CjzxG26vbHDu7DPq0ycxd-0AYVQl79W7mxGj6mw"
 
 youtube_url = st.text_input("Link do vídeo do YouTube:")
-
 def baixar_video(url):
     ydl_opts = {
         'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]',
         'outtmpl': 'input_video.mp4',
-        'overwrites': True
+        'overwrites': True,
+        # Adiciona um User-Agent de navegador real para evitar bloqueios simples
+        'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'nocheckcertificate': True,
+        'ignoreerrors': True,
     }
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         ydl.download([url])
