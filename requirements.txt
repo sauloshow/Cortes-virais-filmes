@@ -1,6 +1,7 @@
 streamlit
-yt-dlp
+yt-dlp>=2024.08.01
 moviepy==1.0.3
 decorator<5.0.0
 google-generativeai
+
 
