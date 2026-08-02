@@ -10,23 +10,32 @@ st.set_page_config(page_title="Gerador de Cortes Virais IA", page_icon="✂️",
 st.title("✂️ Gerador de Cortes Virais de Vídeos")
 st.markdown("Cole o link de um vídeo do YouTube para extrair os trechos de maior impacto usando Inteligência Artificial.")
 
-# Configuração da chave de API da IA (Gemini)
+# Sua chave da API do Gemini
 api_key = "AQ.Ab8RN6IixV2CjzxG26vbHDu7DPq0ycxd-0AYVQl79W7mxGj6mw"
 
 youtube_url = st.text_input("Link do vídeo do YouTube:")
+
 def baixar_video(url):
+    output_filename = "input_video.mp4"
+    
+    # Remove o arquivo antigo caso ele ainda exista
+    if os.path.exists(output_filename):
+        os.remove(output_filename)
+
     ydl_opts = {
-        'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]',
-        'outtmpl': 'input_video.mp4',
+        'format': 'best[ext=mp4]/best', # Garante um formato direto compatível
+        'outtmpl': output_filename,
         'overwrites': True,
-        # Adiciona um User-Agent de navegador real para evitar bloqueios simples
-        'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        'nocheckcertificate': True,
-        'ignoreerrors': True,
+        'quiet': True,
+        'no_warnings': True,
+        # Simula um navegador real para evitar bloqueios do YouTube
+        'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
     }
+    
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         ydl.download([url])
-    return "input_video.mp4"
+        
+    return output_filename
 
 def processar_corte(input_path, start_sec, end_sec, output_path):
     with VideoFileClip(input_path) as video:
@@ -40,20 +49,21 @@ def processar_corte(input_path, start_sec, end_sec, output_path):
 if st.button("🚀 Processar e Gerar Corte"):
     if not youtube_url:
         st.warning("Insira um link do YouTube válido.")
-    elif not api_key:
-        st.warning("Insira sua chave de API do Gemini na barra lateral para continuar.")
     else:
         try:
             genai.configure(api_key=api_key)
             
-            with st.spinner("1. Baixando o vídeo..."):
+            with st.spinner("1. Baixando o vídeo do YouTube..."):
                 video_file = baixar_video(youtube_url)
+                
+                # Validação para confirmar se o vídeo foi realmente baixado
+                if not os.path.exists(video_file) or os.path.getsize(video_file) == 0:
+                    raise Exception("Não foi possível baixar este vídeo específico do YouTube. Tente outro link de vídeo/podcast público.")
                 
             with st.spinner("2. Analisando o tempo do vídeo com IA..."):
                 with VideoFileClip(video_file) as clip:
                     duracao = int(clip.duration)
                 
-                # Instrução para a IA decidir o melhor trecho
                 model = genai.GenerativeModel('gemini-1.5-flash')
                 prompt = f"""
                 Análise um vídeo que tem {duracao} segundos de duração total.
@@ -63,7 +73,6 @@ if st.button("🚀 Processar e Gerar Corte"):
                 
                 response = model.generate_content(prompt)
                 
-                # Limpeza do formato JSON retornado
                 response_text = response.text.replace("```json", "").replace("```", "").strip()
                 corte_info = json.loads(response_text)
                 
@@ -89,3 +98,4 @@ if st.button("🚀 Processar e Gerar Corte"):
 
         except Exception as e:
             st.error(f"Ocorreu um erro durante o processamento: {str(e)}")
+
