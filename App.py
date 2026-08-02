@@ -1,4 +1,4 @@
-                prompt = f"""
+                prompt =f"""
                 Análise um vídeo que tem {duracao} segundos de duração total.
                 Escolha o intervalo de tempo mais marcante (com duração entre 30 e 60 segundos) para um vídeo curto de redes sociais (Reels/TikTok).
                 Retorne EXATAMENTE um JSON com as chaves "inicio" e "fim" representando os segundos numéricos. Exemplo: {{"inicio": 10, "fim": 40}}.
