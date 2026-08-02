@@ -6,7 +6,7 @@
                 
                 response = model.generate_content(prompt)
                 
-                response_text = response.text.replace("```json", "").replace("```", "").strip()
+              response_text = response.text.replace("```json", "").replace("```", "").strip()
                 corte_info = json.loads(response_text)
                 
                 inicio = corte_info.get("inicio", 0)
